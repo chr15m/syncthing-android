@@ -22,8 +22,14 @@ public class GetTask extends AsyncTask<String, Void, String> {
 
 	private static final String TAG = "GetTask";
 
+	public static final String URI_CONFIG = "/rest/config";
+
 	public static final String URI_VERSION = "/rest/version";
 
+	/**
+	 * params[0] Syncthing hostname
+	 * params[1] URI to call
+	 */
 	@Override
 	protected String doInBackground(String... uri) {
 		String fullUri = uri[0] + uri[1];

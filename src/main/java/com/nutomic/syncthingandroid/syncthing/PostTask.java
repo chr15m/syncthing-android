@@ -6,6 +6,7 @@ import android.util.Log;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
@@ -19,14 +20,22 @@ public class PostTask extends AsyncTask<String, Void, Void> {
 
 	public static final String URI_SHUTDOWN = "/rest/shutdown";
 
+	public static final String URI_CONFIG = "/rest/config";
+
+	/**
+	 * params[0] Syncthing hostname
+	 * params[1] URI to call
+	 * params[2] The request content
+	 */
 	@Override
-	protected Void doInBackground(String... uri) {
-		String fullUri = uri[0] + uri[1];
+	protected Void doInBackground(String... params) {
+		String fullUri = params[0] + params[1];
 		Log.i(TAG, "Sending POST request to " + fullUri);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost post = new HttpPost(fullUri);
 		String responseString = null;
 		try {
+			post.setEntity(new StringEntity(params[2]));
 			HttpResponse response = httpclient.execute(post);
 		}
 		catch (IOException e) {
