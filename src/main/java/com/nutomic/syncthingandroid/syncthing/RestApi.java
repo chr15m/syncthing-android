@@ -1,6 +1,11 @@
 package com.nutomic.syncthingandroid.syncthing;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.nutomic.syncthingandroid.R;
@@ -8,9 +13,6 @@ import com.nutomic.syncthingandroid.R;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Array;
-import java.util.Arrays;
 
 /**
  * Provides functions to interact with the syncthing REST API.
@@ -29,13 +31,18 @@ public class RestApi implements SyncthingService.OnWebGuiAvailableListener {
 	 */
 	public static final String TYPE_GUI = "GUI";
 
+	private static final int NOTIFICATION_ID = 2;
+
+	private Context mContext;
+
 	private String mVersion;
 
 	private String mUrl;
 
 	private JSONObject mConfig;
 
-	public RestApi(String url) {
+	public RestApi(Context context, String url) {
+		mContext = context;
 		mUrl = url;
 	}
 
@@ -83,6 +90,13 @@ public class RestApi implements SyncthingService.OnWebGuiAvailableListener {
 	}
 
 	/**
+	 * Restarts the syncthing binary.
+	 */
+	public void restart() {
+		new PostTask().execute(mUrl, PostTask.URI_RESTART, "");
+	}
+
+	/**
 	 * Gets a value from config,
 	 *
 	 * Booleans are returned as {@link }Boolean#toString}, arrays as space seperated string.
@@ -95,7 +109,6 @@ public class RestApi implements SyncthingService.OnWebGuiAvailableListener {
 		try {
 			Object value = mConfig.getJSONObject(name).get(key);
 			return (value instanceof JSONArray)
-					// TODO: also remove "
 					? ((JSONArray) value).join(" ").replace("\"", "")
 					: String.valueOf(value);
 		}
@@ -136,12 +149,25 @@ public class RestApi implements SyncthingService.OnWebGuiAvailableListener {
 	}
 
 	/**
-	 * Sends the updated mConfig via Rest API to syncthing.
-	 *
-	 * TODO: Show a restart notification
+	 * Sends the updated mConfig via Rest API to syncthing and displays a "restart" notification.
 	 */
 	private void configUpdated() {
 		new PostTask().execute(mUrl, PostTask.URI_CONFIG, mConfig.toString());
+
+		Intent i = new Intent(mContext, SyncthingService.class)
+				.setAction(SyncthingService.ACTION_RESTART);
+		PendingIntent pi = PendingIntent.getService(mContext, 0, i, 0);
+
+		Notification n = new NotificationCompat.Builder(mContext)
+				.setContentTitle(mContext.getString(R.string.restart_notif_title))
+				.setContentText(mContext.getString(R.string.restart_notif_text))
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentIntent(pi)
+				.build();
+		n.flags |= Notification.FLAG_ONLY_ALERT_ONCE | Notification.FLAG_AUTO_CANCEL;
+		NotificationManager mNotificationManager =
+				(NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+		mNotificationManager.notify(NOTIFICATION_ID, n);
 	}
 
 }
