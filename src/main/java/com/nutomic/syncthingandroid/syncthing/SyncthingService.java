@@ -50,7 +50,7 @@ public class SyncthingService extends Service {
 
 	private static final String TAG = "SyncthingService";
 
-	private static final int NOTIFICATION_ID = 1;
+	private static final int NOTIFICATION_RUNNING = 1;
 
 	/**
 	 * Intent action to perform a syncthing restart.
@@ -253,7 +253,7 @@ public class SyncthingService extends Service {
 				.setContentIntent(pi)
 				.build();
 		n.flags |= Notification.FLAG_ONGOING_EVENT;
-		startForeground(NOTIFICATION_ID, n);
+		startForeground(NOTIFICATION_RUNNING, n);
 
 		new Thread(new Runnable() {
 			@Override
