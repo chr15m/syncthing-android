@@ -3,7 +3,6 @@ package com.nutomic.syncthingandroid.syncthing;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -35,10 +34,9 @@ public class PostTask extends AsyncTask<String, Void, Void> {
 		Log.i(TAG, "Sending POST request to " + fullUri);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost post = new HttpPost(fullUri);
-		String responseString = null;
 		try {
 			post.setEntity(new StringEntity(params[2]));
-			HttpResponse response = httpclient.execute(post);
+			httpclient.execute(post);
 		}
 		catch (IOException e) {
 			Log.w(TAG, "Failed to call Rest API at " + fullUri, e);

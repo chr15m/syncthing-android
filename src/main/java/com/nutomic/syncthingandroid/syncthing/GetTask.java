@@ -36,7 +36,6 @@ public class GetTask extends AsyncTask<String, Void, String> {
 		Log.i(TAG, "Sending GET request to " + fullUri);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpGet get = new HttpGet(fullUri);
-		String responseString = null;
 		try {
 			HttpResponse response = httpclient.execute(get);
 			HttpEntity entity = response.getEntity();
