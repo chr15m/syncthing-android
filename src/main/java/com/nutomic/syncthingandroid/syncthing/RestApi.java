@@ -147,14 +147,14 @@ public class RestApi implements SyncthingService.OnWebGuiAvailableListener {
 	 */
 	public void shutdown() {
 		mNotificationManager.cancel(NOTIFICATION_RESTART);
-		new PostTask().execute(mUrl, PostTask.URI_SHUTDOWN, "");
+		new PostTask().execute(mUrl, PostTask.URI_SHUTDOWN);
 	}
 
 	/**
 	 * Restarts the syncthing binary.
 	 */
 	public void restart() {
-		new PostTask().execute(mUrl, PostTask.URI_RESTART, "");
+		new PostTask().execute(mUrl, PostTask.URI_RESTART);
 	}
 
 	/**

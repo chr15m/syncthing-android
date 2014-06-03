@@ -26,7 +26,7 @@ public class PostTask extends AsyncTask<String, Void, Void> {
 	/**
 	 * params[0] Syncthing hostname
 	 * params[1] URI to call
-	 * params[2] The request content
+	 * params[2] The request content (optional)
 	 */
 	@Override
 	protected Void doInBackground(String... params) {
@@ -35,7 +35,9 @@ public class PostTask extends AsyncTask<String, Void, Void> {
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost post = new HttpPost(fullUri);
 		try {
-			post.setEntity(new StringEntity(params[2]));
+			if (params.length > 2) {
+				post.setEntity(new StringEntity(params[2]));
+			}
 			httpclient.execute(post);
 		}
 		catch (IOException e) {
